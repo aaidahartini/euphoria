@@ -6,6 +6,8 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -41,7 +43,7 @@ class _MyHomePageState extends State<MyHomePage> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Icon(Icons.coffee, size: 150, color: Colors.brown[300]),
+              Icon(Icons.coffee, size: 150, color: Colors.brown[500]),
 
               const SizedBox(height: 20),
 
@@ -94,19 +96,28 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
-class MyMenuPage extends StatelessWidget {
+class MyMenuPage extends StatefulWidget {
+  const MyMenuPage({super.key});
+
+  @override
+  State<MyMenuPage> createState() => _MyMenuPageState();
+}
+
+class _MyMenuPageState extends State<MyMenuPage> {
+  final TextEditingController _searchController = TextEditingController();
+
   final List<Map<String, dynamic>> menuItems = [
     {
       'name': 'Latte',
       'price': 'RM5.00',
-      'https':
-          '//images.unsplash.com/photo-1512568400610-62da28bc8a13?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+      'image':
+          'https://images.unsplash.com/photo-1576033413948-950592dd0fe0?q=80&w=987&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     },
     {
       'name': 'Cappuccino',
       'price': 'RM5.00',
       'image':
-          'https://images.unsplash.com/photo-1512568400610-62da28bc8a13?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+          'https://images.unsplash.com/photo-1572309148120-e18fa3b0c9f6?q=80&w=1227&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     },
     {
       'name': 'Espresso',
@@ -128,9 +139,16 @@ class MyMenuPage extends StatelessWidget {
     },
   ];
 
-  MyMenuPage({super.key});
+  String searchQuery = '';
+
   @override
   Widget build(BuildContext context) {
+    final filteredItems =
+        menuItems.where((item) {
+          final name = item['name'].toString().toLowerCase();
+          return name.contains(searchQuery.toLowerCase());
+        }).toList();
+
     return Scaffold(
       backgroundColor: Colors.brown[100],
       appBar: AppBar(
@@ -145,6 +163,7 @@ class MyMenuPage extends StatelessWidget {
         child: Column(
           children: [
             TextField(
+              controller: _searchController,
               decoration: InputDecoration(
                 hintText: 'Search for coffee',
                 prefixIcon: const Icon(Icons.search),
@@ -159,52 +178,65 @@ class MyMenuPage extends StatelessWidget {
                   borderSide: BorderSide.none,
                 ),
               ),
+              onChanged: (value) {
+                setState(() {
+                  searchQuery = value;
+                });
+              },
             ),
             const SizedBox(height: 20),
 
             Expanded(
-              child: ListView.builder(
-                itemCount: menuItems.length,
-                itemBuilder: (context, index) {
-                  final item = menuItems[index];
-                  return GestureDetector(
-                    onTap: () {
-                      //Navigation page
-                    },
-                    child: Card(
-                      color: Colors.white,
-                      margin: const EdgeInsets.symmetric(vertical: 8),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
+              child:
+                  filteredItems.isEmpty
+                      ? const Center(
+                        child: Text(
+                          'No coffee found.',
+                          style: TextStyle(color: Colors.brown, fontSize: 18),
+                        ),
+                      )
+                      : ListView.builder(
+                        itemCount: menuItems.length,
+                        itemBuilder: (context, index) {
+                          final item = filteredItems[index];
+                          return GestureDetector(
+                            onTap: () {
+                              //Navigation to page detail
+                            },
+                            child: Card(
+                              color: Colors.white,
+                              margin: const EdgeInsets.symmetric(vertical: 8),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: ListTile(
+                                contentPadding: const EdgeInsets.all(12),
+                                leading: Image.network(
+                                  item['image'],
+                                  width: 60,
+                                  height: 60,
+                                  fit: BoxFit.cover,
+                                ),
+                                title: Text(
+                                  item['name'],
+                                  style: const TextStyle(
+                                    color: Colors.brown,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 18,
+                                  ),
+                                ),
+                                subtitle: Text(
+                                  item['price'],
+                                  style: const TextStyle(
+                                    color: Colors.brown,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          );
+                        },
                       ),
-                      child: ListTile(
-                        contentPadding: const EdgeInsets.all(12),
-                        leading: Image.network(
-                          item['image'],
-                          width: 60,
-                          height: 60,
-                          fit: BoxFit.cover,
-                        ),
-                        title: Text(
-                          item['name'],
-                          style: const TextStyle(
-                            color: Colors.brown,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
-                          ),
-                        ),
-                        subtitle: Text(
-                          item['price'],
-                          style: const TextStyle(
-                            color: Colors.brown,
-                            fontSize: 16,
-                          ),
-                        ),
-                      ),
-                    ),
-                  );
-                },
-              ),
             ),
           ],
         ),
