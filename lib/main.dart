@@ -1,5 +1,6 @@
 //Import necessary FLutter package to use widgets and function
 import 'package:flutter/material.dart';
+import 'package:euphoria/detail_menu_page.dart';
 
 void main() {
   runApp(MyApp());
@@ -107,36 +108,11 @@ class _MyMenuPageState extends State<MyMenuPage> {
   final TextEditingController _searchController = TextEditingController();
 
   final List<Map<String, dynamic>> menuItems = [
-    {
-      'name': 'Latte',
-      'price': 'RM5.00',
-      'image':
-          'https://images.unsplash.com/photo-1576033413948-950592dd0fe0?q=80&w=987&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-    },
-    {
-      'name': 'Cappuccino',
-      'price': 'RM5.00',
-      'image':
-          'https://images.unsplash.com/photo-1572309148120-e18fa3b0c9f6?q=80&w=1227&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-    },
-    {
-      'name': 'Espresso',
-      'price': 'RM4.00',
-      'image':
-          'https://images.unsplash.com/photo-1512568400610-62da28bc8a13?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-    },
-    {
-      'name': 'Black Coffee',
-      'price': 'RM4.00',
-      'image':
-          'https://images.unsplash.com/photo-1512568400610-62da28bc8a13?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-    },
-    {
-      'name': 'Americano',
-      'price': 'RM4.00',
-      'image':
-          'https://images.unsplash.com/photo-1512568400610-62da28bc8a13?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-    },
+    {'name': 'Latte', 'price': 'RM5.00', 'imageFile': 'latte.jpg'},
+    {'name': 'Cappuccino', 'price': 'RM5.00', 'imageFile': 'cappuccino.jpg'},
+    {'name': 'Espresso', 'price': 'RM4.00', 'imageFile': 'espresso.jpg'},
+    {'name': 'Black Coffee', 'price': 'RM4.00', 'imageFile': 'black.jpg'},
+    {'name': 'Americano', 'price': 'RM4.00', 'imageFile': 'americano.jpg'},
   ];
 
   String searchQuery = '';
@@ -150,7 +126,7 @@ class _MyMenuPageState extends State<MyMenuPage> {
         }).toList();
 
     return Scaffold(
-      backgroundColor: Colors.brown[100],
+      backgroundColor: Colors.brown[600],
       appBar: AppBar(
         title: const Text("Euphoria Coffee Menu"),
         backgroundColor: Colors.white,
@@ -202,17 +178,24 @@ class _MyMenuPageState extends State<MyMenuPage> {
                           return GestureDetector(
                             onTap: () {
                               //Navigation to page detail
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder:
+                                      (_) => DetailMenuPage(menuItem: item),
+                                ),
+                              );
                             },
                             child: Card(
-                              color: Colors.white,
+                              color: Colors.brown[100],
                               margin: const EdgeInsets.symmetric(vertical: 8),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(10),
                               ),
                               child: ListTile(
                                 contentPadding: const EdgeInsets.all(12),
-                                leading: Image.network(
-                                  item['image'],
+                                leading: Image.asset(
+                                  'assets/images/${menuItems[index]['imageFile']}',
                                   width: 60,
                                   height: 60,
                                   fit: BoxFit.cover,
@@ -240,6 +223,13 @@ class _MyMenuPageState extends State<MyMenuPage> {
             ),
           ],
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          //Navigation to orders cart page
+        },
+        backgroundColor: Colors.brown[200],
+        child: const Icon(Icons.add_shopping_cart, color: Colors.white),
       ),
     );
   }
